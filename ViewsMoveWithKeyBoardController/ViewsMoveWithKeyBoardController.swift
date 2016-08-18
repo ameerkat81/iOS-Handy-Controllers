@@ -13,16 +13,16 @@ import UIKit
  Suppose the user is ````exampleController````, the implement of each func should exactly be:
  ````
  func handleTouches(sender:UITapGestureRecognizer){
-    exampleController?.handleTouches(sender)
+ exampleController?.handleTouches(sender)
  }
  
  func keyBoardWillShow(note:NSNotification){
-    exampleController?.keyBoardWillShow(note)
+ exampleController?.keyBoardWillShow(note)
  }
  
  func keyBoardWillHide(note:NSNotification)
  {
-    exampleController?.keyBoardWillHide(note)
+ exampleController?.keyBoardWillHide(note)
  }
  ````
  */
@@ -33,69 +33,67 @@ protocol NeedTheViewsMoveWithKeyBoardController {
 }
 
 /**
-    ViewsMoveWithKeyBoardController control views move up and down together with keyboard.  
-    ## Usage Example ##  
-    In the viewcontroller who's using ViewsMoveWithKeyBoardController:
-    ````
-     var moveController:ViewsMoveWithKeyBoardController?
-     
-     override func viewDidLoad() {
-     super.viewDidLoad()
-     // Do any additional setup after loading the view, typically from a nib.
-     let objects:[UIView] = [userIdTF,userpwdTF,signUpBtn,signInBtn,userPwdLabel,userIdLabel]
-     moveController = ViewsMoveWithKeyBoardController(observerVc: self, objectsNeedsToMove: objects)
-    ````
-    Add protocal name to viewcontroller who's using ViewsMoveWithKeyBoardController.
-    Then implenment the NeedTheViewsMoveWithKeyBoardController protocal.
-    ````
-     func handleTouches(sender:UITapGestureRecognizer){
-        moveController?.handleTouches(sender)
-     }
-     
-     func keyBoardWillShow(note:NSNotification){
-        moveController?.keyBoardWillShow(note)
-     }
-     
-     func keyBoardWillHide(note:NSNotification)
-     {
-        moveController?.keyBoardWillHide(note)
-     }
-    ````
+ ViewsMoveWithKeyBoardController control views move up and down together with keyboard.
+ ## Usage Example ##
+ In the viewcontroller who's using ViewsMoveWithKeyBoardController:
+ ````
+ var moveController:ViewsMoveWithKeyBoardController?
+ 
+ override func viewDidLoad() {
+ super.viewDidLoad()
+ // Do any additional setup after loading the view, typically from a nib.
+ let objects:[UIView] = [userIdTF,userpwdTF,signUpBtn,signInBtn,userPwdLabel,userIdLabel]
+ moveController = ViewsMoveWithKeyBoardController(observerVc: self, objectsNeedsToMove: objects)
+ ````
+ Add protocal name to viewcontroller who's using ViewsMoveWithKeyBoardController.
+ Then implenment the NeedTheViewsMoveWithKeyBoardController protocal.
+ ````
+ func handleTouches(sender:UITapGestureRecognizer){
+ moveController?.handleTouches(sender)
  }
  
+ func keyBoardWillShow(note:NSNotification){
+ moveController?.keyBoardWillShow(note)
+ }
+ 
+ func keyBoardWillHide(note:NSNotification)
+ {
+ moveController?.keyBoardWillHide(note)
+ }
+ ````
  */
 class ViewsMoveWithKeyBoardController {
     /// This is the reference of the viewcontroller who's using this ViewsMoveWithKeyBoardController, observer touches an recieving notification.
-    let observerViewController:UIViewController!
+    weak var observerViewController:UIViewController?
     /// Default distance between the lowest view and keyboard.
     var distanceBetweenKeybordAndObject:Double = 70
     /// Contain views need to move together with keyboard.
     var objectsNeedsToMove:[UIView]!
     
     /**
-        initializer, Don't Call!, call convenience initializer
-        ## Important ##
-        **Don't call this one to initialize! !**  
-        Call the convenience init to add NSNotifiacation Observer and TapGestureRecongnizer
+     initializer, Don't Call!, call convenience initializer
+     ## Important ##
+     **Don't call this one to initialize! !**
+     Call the convenience init to add NSNotifiacation Observer and TapGestureRecongnizer
      
-    */
+     */
     init(observerVc: UIViewController, objects: [UIView]){
         self.observerViewController = observerVc
         objectsNeedsToMove = objects
     }
     
     /**
-        convenience initializer
-    */
+     convenience initializer
+     */
     convenience init(observerVc: UIViewController,objectsNeedsToMove: [UIView]) {
-    
+        
         self.init(observerVc: observerVc, objects: objectsNeedsToMove)
-    
+        
         SetTapGestureRecongnizerAndObeserver()
-    
+        
     }
     /**
-        convenience initializer (can set distance)
+     convenience initializer (can set distance)
      */
     convenience init(observerVc: UIViewController,objectsNeedsToMove: [UIView], distanceBetweenLowestViewAndKeyBoard: Double) {
         
@@ -105,20 +103,20 @@ class ViewsMoveWithKeyBoardController {
         SetTapGestureRecongnizerAndObeserver()
         
     }
-
+    
     func SetTapGestureRecongnizerAndObeserver() {
         // add tapGestureRecongnizer
         let tapGestureRecognizer = UITapGestureRecognizer(target: observerViewController, action: #selector(handleTouches(_:)))
         self.observerViewController?.view.addGestureRecognizer(tapGestureRecognizer)
         
         // add observer in NSNotificationCenter for KeyBoard
-        NSNotificationCenter.defaultCenter().addObserver(observerViewController, selector: #selector(keyBoardWillShow(_:)), name:UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(observerViewController!, selector: #selector(keyBoardWillShow(_:)), name:UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyBoardWillHide(_:)), name:UIKeyboardWillHideNotification, object: nil)
     }
     
     @objc func handleTouches(sender:UITapGestureRecognizer){
         
-        if sender.locationInView(observerViewController.view).y < observerViewController.view.bounds.height - 250{
+        if sender.locationInView(observerViewController!.view).y < observerViewController!.view.bounds.height - 250{
             for object in objectsNeedsToMove {
                 if object.classForCoder == UITextView.classForCoder()
                     || object.classForCoder == UITextField.classForCoder() {
