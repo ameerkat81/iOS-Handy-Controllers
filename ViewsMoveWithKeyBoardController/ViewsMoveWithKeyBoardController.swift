@@ -3,7 +3,7 @@
 //
 //  Created by ameerkat on 16/8/16.
 //
-//  Any suggestion or question, please contact me:
+//  Any suggestion or question, please contact me: ameerkat81@gmail.com
 
 
 import Foundation
