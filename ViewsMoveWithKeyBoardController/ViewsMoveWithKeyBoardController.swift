@@ -107,7 +107,7 @@ class ViewsMoveWithKeyBoardController {
     func SetTapGestureRecongnizerAndObeserver() {
         // add tapGestureRecongnizer
         let tapGestureRecognizer = UITapGestureRecognizer(target: observerViewController, action: #selector(handleTouches(_:)))
-        self.observerViewController?.view.addGestureRecognizer(tapGestureRecognizer)
+        self.observerViewController!.view.addGestureRecognizer(tapGestureRecognizer)
         
         // add observer in NSNotificationCenter for KeyBoard
         NSNotificationCenter.defaultCenter().addObserver(observerViewController!, selector: #selector(keyBoardWillShow(_:)), name:UIKeyboardWillShowNotification, object: nil)
